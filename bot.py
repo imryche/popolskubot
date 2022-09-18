@@ -108,10 +108,10 @@ if __name__ == "__main__":
 
     start_handler = CommandHandler("start", start)
     say_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), say)
-    caps_handler = CommandHandler("anki", anki)
+    anki_handler = CommandHandler("anki", anki)
 
     application.add_handler(start_handler)
     application.add_handler(say_handler)
-    application.add_handler(caps_handler)
+    application.add_handler(anki_handler)
 
     application.run_polling()
