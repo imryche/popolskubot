@@ -75,32 +75,33 @@ async def say(update, context):
 
 
 async def anki(update, context):
+    # create the anki file
     if not os.path.exists(anki_csv_path):
         open(anki_csv_path, "w").close()
         await context.bot.send_message(
-            chat_id=update.effective_chat.id, text="anki recording..."
+            chat_id=update.effective_chat.id,
+            text=(
+                "💾 Recording the data for Anki. "
+                "Use the /anki command again to finish."
+            ),
         )
+        return
 
-    else:
-        with open(anki_csv_path, "rb") as f:
-            await context.bot.send_document(
-                chat_id=update.effective_chat.id, document=f
-            )
+    with open(anki_csv_path, "rb") as f:
+        await context.bot.send_document(chat_id=update.effective_chat.id, document=f)
 
-        with ZipFile(anki_archive_path, "w") as z:
-            for dname, _, fnames in os.walk(anki_speech_dir):
-                for fname in fnames:
-                    fpath = os.path.join(dname, fname)
-                    z.write(fpath, os.path.basename(fpath))
+    with ZipFile(anki_archive_path, "w") as z:
+        for dname, _, fnames in os.walk(anki_speech_dir):
+            for fname in fnames:
+                fpath = os.path.join(dname, fname)
+                z.write(fpath, os.path.basename(fpath))
 
-        with open(anki_archive_path, "rb") as f:
-            await context.bot.send_document(
-                chat_id=update.effective_chat.id, document=f
-            )
+    with open(anki_archive_path, "rb") as f:
+        await context.bot.send_document(chat_id=update.effective_chat.id, document=f)
 
-        os.remove(anki_csv_path)
-        os.remove(anki_archive_path)
-        shutil.rmtree(anki_speech_dir)
+    os.remove(anki_csv_path)
+    os.remove(anki_archive_path)
+    shutil.rmtree(anki_speech_dir)
 
 
 if __name__ == "__main__":
